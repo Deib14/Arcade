@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Corner Arcade — offline browser games</title>
+<meta name="description" content="A pocket arcade of classic games that runs entirely offline in your browser. Flappy Bird, Snake, Breakout, 2048, Dino Run, Pong, Memory Match, Whack-a-Mole — with difficulty levels and achievements.">
+<meta name="theme-color" content="#0b0e14">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <button class="brand" id="brandBtn">CORNER ARCADE</button>
+    <div class="nav-actions">
+      <button class="icon-btn" id="achievementsBtn" aria-label="Achievements">🏆</button>
+      <button class="icon-btn" id="settingsBtn" aria-label="Settings">⚙️</button>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap" id="landing">
+  <section class="hero">
+    <div class="marquee">CORNER ARCADE</div>
+    <div class="tagline">insert coin <span class="dot">·</span> no wifi required <span class="dot">·</span> scores saved on this device</div>
+    <div class="stats-strip">
+      <div class="stat"><div class="stat-value" id="statGames">12</div><div class="stat-label">Games</div></div>
+      <div class="stat"><div class="stat-value" id="statAchievements">0/41</div><div class="stat-label">Achievements</div></div>
+      <div class="stat"><div class="stat-value" id="statBest">—</div><div class="stat-label">Top Score</div></div>
+    </div>
+  </section>
+
+  <div id="grid"></div>
+
+  <footer>
+    Corner Arcade — every game runs 100% offline once loaded.<br>
+    <a href="ROADMAP.md" target="_blank" rel="noopener">Roadmap</a>
+  </footer>
+</main>
+
+<section id="gameView" class="hidden">
+  <div class="wrap">
+    <div class="game-toolbar">
+      <div class="toolbar-left">
+        <button class="back-btn" id="backBtn">&larr; Arcade</button>
+      </div>
+      <div class="toolbar-right">
+        <button class="icon-btn icon-btn--small hidden" id="restartBtn" aria-label="Restart">↻</button>
+        <button class="icon-btn icon-btn--small hidden" id="pauseBtn" aria-label="Pause">⏸</button>
+      </div>
+    </div>
+
+    <div class="game-heading">
+      <h1 id="gameTitle">Game</h1>
+      <p id="gameSubtitle"></p>
+    </div>
+
+    <div class="score-row">
+      <span id="liveScoreLine">Score 0</span>
+      <span class="best" id="bestScoreLine">Best: 0</span>
+    </div>
+
+    <div class="difficulty-picker hidden" id="difficultyPicker"></div>
+
+    <div class="stage-wrap">
+      <div class="stage" id="stage">
+        <canvas id="gameCanvas" width="480" height="640"></canvas>
+        <div class="overlay hidden" id="overlay">
+          <div class="overlay-icon" id="overlayIcon">🎮</div>
+          <h2 id="overlayTitle">Ready?</h2>
+          <p id="overlaySub">Tap play when you are ready.</p>
+          <p class="overlay-stats hidden" id="overlayStats"></p>
+          <div class="overlay-actions">
+            <button class="play-btn" id="overlayPrimaryBtn">▶ Play</button>
+            <button class="secondary-btn hidden" id="overlaySecondaryBtn">Restart</button>
+          </div>
+        </div>
+      </div>
+      <div class="touch-controls hidden" id="touchControls"></div>
+    </div>
+
+    <div class="hint" id="hintLine"></div>
+  </div>
+</section>
+
+<!-- Achievements panel -->
+<div class="modal-backdrop hidden" id="achievementsBackdrop" data-panel="achievements"></div>
+<aside class="panel hidden" id="achievementsPanel">
+  <div class="panel-header">
+    <h2>Achievements</h2>
+    <button class="panel-close" id="achievementsCloseBtn">✕</button>
+  </div>
+  <div class="panel-count" id="achievementsCount">0 / 41</div>
+  <div id="achievementsList"></div>
+</aside>
+
+<!-- Settings panel -->
+<div class="modal-backdrop hidden" id="settingsBackdrop" data-panel="settings"></div>
+<aside class="panel hidden" id="settingsPanel">
+  <div class="panel-header">
+    <h2>Settings</h2>
+    <button class="panel-close" id="settingsCloseBtn">✕</button>
+  </div>
+  <div class="settings-row">
+    <div>
+      <label for="soundToggle">Sound effects</label>
+      <div class="settings-desc">Chimes, hits, and cues while you play.</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="soundToggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="settings-row">
+    <div>
+      <label for="motionToggle">Animations</label>
+      <div class="settings-desc">Turn off flicker and motion effects.</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="motionToggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="settings-row">
+    <div>
+      <label for="shakeToggle">Screen shake</label>
+      <div class="settings-desc">Impact shake and flash on hits, deaths, and explosions.</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="shakeToggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="settings-row" id="hapticsRow">
+    <div>
+      <label for="hapticsToggle">Vibration</label>
+      <div class="settings-desc">Short vibration on hits and game over. Mobile only.</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="hapticsToggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+</aside>
+
+<script src="js/core/storage.js"></script>
+<script src="js/core/sound.js"></script>
+<script src="js/core/achievements.js"></script>
+<script src="js/core/difficulty.js"></script>
+<script src="js/core/shell.js"></script>
+<script src="js/games/flappy.js"></script>
+<script src="js/games/snake.js"></script>
+<script src="js/games/breakout.js"></script>
+<script src="js/games/g2048.js"></script>
+<script src="js/games/dino.js"></script>
+<script src="js/games/pong.js"></script>
+<script src="js/games/memory.js"></script>
+<script src="js/games/whack.js"></script>
+<script src="js/games/minesweeper.js"></script>
+<script src="js/games/tetris.js"></script>
+<script src="js/games/invaders.js"></script>
+<script src="js/games/sudoku.js"></script>
+<script src="js/app.js"></script>
+<script src="js/pwa.js"></script>
+</body>
+</html>
