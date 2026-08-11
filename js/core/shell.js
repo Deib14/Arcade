@@ -82,8 +82,7 @@ const Shell = (() => {
 
     document.getElementById('gameTitle').textContent = currentGame.title;
     document.getElementById('gameSubtitle').textContent = currentGame.tagline || '';
-    document.getElementById('bestScoreLine').textContent =
-      'Best: ' + formatScore(window.Arcade.Scores.getBest(gameId));
+    updateBestScoreLine(gameId);
 
     renderDifficultyPicker();
     renderTouchControls();
@@ -264,13 +263,18 @@ const Shell = (() => {
   }
 
   function handleEnd(result) {
-    // result: { score, won, meta }
+    // result: { score, won, meta, scoreKey }
+    // scoreKey lets a game record its score under a different bucket than
+    // its own gameId — e.g. Snake's Xenzia mode uses 'snake-xenzia' so it
+    // tracks a separate high score from regular Snake, since it's a mode
+    // toggle rather than a difficulty level and shouldn't share one.
+    const scoreGameId = result.scoreKey || currentGameId;
     state = STATE.OVER;
     if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
     document.getElementById('pauseBtn').classList.add('hidden');
     document.getElementById('restartBtn').classList.add('hidden');
 
-    const isNewBest = window.Arcade.Scores.submit(currentGameId, activeDifficulty, result.score || 0);
+    const isNewBest = window.Arcade.Scores.submit(scoreGameId, activeDifficulty, result.score || 0);
     if (result.won) window.Arcade.Stats.recordWin(currentGameId);
     if (currentGame.onGameEnd) currentGame.onGameEnd(result, { difficulty: activeDifficulty });
     if (window.Arcade.Sound) window.Arcade.Sound.play(result.won ? 'win' : 'gameOver');
@@ -282,7 +286,7 @@ const Shell = (() => {
     el('overlayTitle').textContent = isNewBest ? 'New Best!' : (result.title || (result.won ? 'You win!' : 'Game over'));
     el('overlayTitle').classList.toggle('overlay-title--celebrate', !!isNewBest);
     let sub = `Score ${formatScore(result.score || 0)}`;
-    if (!isNewBest) sub += `  ·  Best ${formatScore(window.Arcade.Scores.getBest(currentGameId))}`;
+    if (!isNewBest) sub += `  ·  Best ${formatScore(window.Arcade.Scores.get(scoreGameId, activeDifficulty))}`;
     else if (result.title) sub = `${result.title}  ·  ${sub}`;
     el('overlaySub').textContent = sub;
     el('overlayPrimaryBtn').textContent = '↻  Play again';
@@ -292,10 +296,18 @@ const Shell = (() => {
     el('overlaySecondaryBtn').onclick = showReadyOverlay;
     if (isNewBest && window.Arcade.Sound) window.Arcade.Sound.play('achievement');
 
-    document.getElementById('bestScoreLine').textContent =
-      'Best: ' + formatScore(window.Arcade.Scores.getBest(currentGameId));
+    updateBestScoreLine(currentGameId, scoreGameId);
 
     if (window.Arcade.onRoundEnd) window.Arcade.onRoundEnd();
+  }
+
+  function updateBestScoreLine(gameId, scoreKey) {
+    const key = scoreKey || gameId;
+    const game = GAMES[gameId];
+    const label = (game && game.supportsDifficulty)
+      ? `Best (${activeDifficulty}): ${formatScore(window.Arcade.Scores.get(key, activeDifficulty))}`
+      : `Best: ${formatScore(window.Arcade.Scores.getBest(key))}`;
+    document.getElementById('bestScoreLine').textContent = label;
   }
 
   function formatScore(n) {

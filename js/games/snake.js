@@ -43,7 +43,13 @@
     }
     food = { x: fx, y: fy };
     // Occasional special food: bonus (+5) or speed (temporary boost).
-    // Weighted so normal food is still the common case.
+    // Weighted so normal food is still the common case. Xenzia mode
+    // (the classic 1997 Nokia presentation) skips this entirely — only
+    // plain food, matching the original game it's paying homage to.
+    if (getXenziaMode()) {
+      foodType = FOOD_NORMAL;
+      return;
+    }
     const roll = Math.random();
     foodType = roll < 0.12 ? FOOD_BONUS : roll < 0.20 ? FOOD_SPEED : FOOD_NORMAL;
   }
@@ -51,6 +57,13 @@
   function lerp(a, b, t) { return a + (b - a) * t; }
 
   function draw(ctx, interpT) {
+    const xenzia = getXenziaMode();
+
+    if (xenzia) {
+      drawXenzia(ctx);
+      return;
+    }
+
     ctx.fillStyle = '#06181a'; ctx.fillRect(0, 0, W, H);
     ctx.strokeStyle = 'rgba(53,224,208,0.06)';
     for (let i = 0; i <= cols; i++) { ctx.beginPath(); ctx.moveTo(i * cell, 0); ctx.lineTo(i * cell, H); ctx.stroke(); }
@@ -86,9 +99,32 @@
     });
   }
 
+  // Xenzia mode: the classic 1997 Nokia presentation — monochrome LCD
+  // green-on-black, blocky grid-snapped movement (no smooth interpolation,
+  // no food pulse, no special food types), solid walls only. A deliberate
+  // visual and mechanical throwback, not just a recolor.
+  function drawXenzia(ctx) {
+    ctx.fillStyle = '#0d1f0a'; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(120,200,90,0.05)';
+    for (let i = 0; i <= cols; i++) { ctx.beginPath(); ctx.moveTo(i * cell, 0); ctx.lineTo(i * cell, H); ctx.stroke(); }
+    for (let j = 0; j <= rows; j++) { ctx.beginPath(); ctx.moveTo(0, j * cell); ctx.lineTo(W, j * cell); ctx.stroke(); }
+
+    ctx.fillStyle = '#8fd45a';
+    ctx.fillRect(food.x * cell + 3, food.y * cell + 3, cell - 6, cell - 6);
+
+    snake.forEach(s => {
+      ctx.fillStyle = '#78c848';
+      ctx.fillRect(s.x * cell + 1, s.y * cell + 1, cell - 2, cell - 2);
+    });
+  }
+
   function wrapKey() { return 'arcade_v2_snake_wrap'; }
   function getWrapMode() { return localStorage.getItem(wrapKey()) === '1'; }
   function setWrapMode(on) { localStorage.setItem(wrapKey(), on ? '1' : '0'); }
+
+  function xenziaKey() { return 'arcade_v2_snake_xenzia'; }
+  function getXenziaMode() { return localStorage.getItem(xenziaKey()) === '1'; }
+  function setXenziaMode(on) { localStorage.setItem(xenziaKey(), on ? '1' : '0'); }
 
   function init({ difficulty }) {
     resetState(window.Arcade.getDifficultyConfig('snake', difficulty));
@@ -110,6 +146,13 @@
         // there's no exploit in switching it mid-game.
         setWrapMode(!getWrapMode());
         window.Arcade.Sound.play('click');
+        e.preventDefault();
+        return;
+      }
+      if (k === 'x' || k === 'X') {
+        setXenziaMode(!getXenziaMode());
+        window.Arcade.Sound.play('click');
+        draw(ctxRef);
         e.preventDefault();
         return;
       }
@@ -157,7 +200,9 @@
     dir = nextDir;
     let head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
 
-    const wrap = getWrapMode();
+    // Xenzia mode always uses solid walls, matching the original —
+    // wraparound is a modern-mode-only option, not available here.
+    const wrap = !getXenziaMode() && getWrapMode();
     if (wrap) {
       // wraparound mode: leaving one edge brings you in from the other,
       // so out-of-bounds is never itself a death condition here
@@ -230,7 +275,7 @@
     window.Arcade.Shell.vibrate([40, 30, 60]);
     if (snake.length >= 10) window.Arcade.unlockAchievement('snake_10');
     if (snake.length >= 25) window.Arcade.unlockAchievement('snake_25');
-    onEnd({ score: snake.length, won: false, title: 'Game over' });
+    onEnd({ score: snake.length, won: false, title: 'Game over', scoreKey: getXenziaMode() ? 'snake-xenzia' : undefined });
   }
 
   function teardown() {
@@ -258,9 +303,10 @@
     width: W, height: H,
     supportsDifficulty: true,
     touchControls: [
-      { slot: 'wrap-toggle', icon: '🔁', label: 'Toggle wrap mode', group: 'action', onDown: () => { setWrapMode(!getWrapMode()); window.Arcade.Sound.play('click'); } }
+      { slot: 'wrap-toggle', icon: '🔁', label: 'Toggle wrap mode', group: 'action', onDown: () => { setWrapMode(!getWrapMode()); window.Arcade.Sound.play('click'); } },
+      { slot: 'xenzia-toggle', icon: '📟', label: 'Toggle Xenzia mode', group: 'action', onDown: () => { setXenziaMode(!getXenziaMode()); window.Arcade.Sound.play('click'); } }
     ],
-    instructions: 'Arrow keys, WASD, or swipe to steer. Press M (or the toggle button) to switch between Classic walls and Wraparound.',
+    instructions: 'Arrow keys, WASD, or swipe to steer. Press M (or a toggle button) to switch between Classic walls and Wraparound. Press X to switch into Xenzia mode — the classic 1997 monochrome presentation, plain food only, solid walls.',
     init, renderIdleFrame, start, tick, teardown, onGameEnd
   });
 })();

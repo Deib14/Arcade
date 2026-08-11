@@ -40,6 +40,7 @@ const ACHIEVEMENTS = [
   // --- Pong ---
   { id: 'pong_win',        name: 'Table Tennis Pro',  desc: 'Win a match of Pong.',                              icon: '🏓' },
   { id: 'pong_shutout',    name: 'Shutout',           desc: 'Win a Pong match without conceding a point.',       icon: '🥇' },
+  { id: 'pong_marathon',   name: 'Marathon Match',    desc: 'Play a Pong match to 21.',                          icon: '⏱️' },
 
   // --- Memory Match ---
   { id: 'memory_win',      name: 'Sharp Memory',      desc: 'Clear a round of Memory Match.',                    icon: '🧠' },
@@ -63,6 +64,8 @@ const ACHIEVEMENTS = [
   { id: 'invaders_wave1',  name: 'First Contact',     desc: 'Clear the first wave in Space Invaders.',           icon: '👾' },
   { id: 'invaders_wave3',  name: 'Fleet Commander',   desc: 'Clear 3 waves in one run.',                         icon: '🛸' },
   { id: 'invaders_noloss', name: 'Untouched',         desc: 'Clear a wave without losing a life.',               icon: '🛡️' },
+  { id: 'invaders_boss',   name: 'Boss Slayer',       desc: 'Defeat a boss wave.',                               icon: '👑' },
+  { id: 'invaders_rapidfire', name: 'Locked and Loaded', desc: 'Pick up a Rapid Fire power-up.',                 icon: '🔥' },
 
   // --- Sudoku ---
   { id: 'sudoku_easy',     name: 'Numbers Game',      desc: 'Complete a Sudoku puzzle.',                         icon: '🔷' },

@@ -419,9 +419,9 @@
     instructions: 'Arrows/WASD to move and rotate, Space to hard-drop, Shift/C to hold. A landed piece flickers briefly before locking — you can still slide or rotate it in that window. Clear lines back-to-back for a combo bonus.',
     touchControls: [
       { slot: 'move-left',  icon: '◀', label: 'Move left',  group: 'move',   onDown: () => { moveLeft(); startDAS(-1); }, onUp: () => stopDAS() },
-      { slot: 'rotate',     icon: '⟳', label: 'Rotate',     group: 'move',   onDown: () => rotate() },
       { slot: 'move-right', icon: '▶', label: 'Move right', group: 'move',   onDown: () => { moveRight(); startDAS(1); }, onUp: () => stopDAS() },
       { slot: 'soft-drop',  icon: '▼', label: 'Soft drop',  group: 'action', onDown: () => setSoftDrop(true), onUp: () => setSoftDrop(false) },
+      { slot: 'rotate',     icon: '⟳', label: 'Rotate',     group: 'action', onDown: () => rotate() },
       { slot: 'hard-drop',  icon: '⤓', label: 'Hard drop',  group: 'action', onDown: () => doHardDrop() },
     ],
     init, renderIdleFrame, start, tick, teardown, onGameEnd
