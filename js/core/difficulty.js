@@ -60,6 +60,16 @@ const DIFFICULTY_PRESETS = {
     easy:   { clues: 42 },
     normal: { clues: 32 },
     hard:   { clues: 26 }
+  },
+  spaceImpact: {
+    easy:   { scrollSpeed: 1.6, enemySpawnMs: 1400, enemyHp: 1, lives: 4, bossHpMult: 1.0 },
+    normal: { scrollSpeed: 2.2, enemySpawnMs: 1100, enemyHp: 1, lives: 3, bossHpMult: 1.3 },
+    hard:   { scrollSpeed: 2.8, enemySpawnMs: 800,  enemyHp: 2, lives: 2, bossHpMult: 1.7 }
+  },
+  bounce: {
+    easy:   { lives: 5, spikeCount: 3, jumpVy: -10.5 },
+    normal: { lives: 3, spikeCount: 5, jumpVy: -10 },
+    hard:   { lives: 2, spikeCount: 8, jumpVy: -9.5 }
   }
 };
 

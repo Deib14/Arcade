@@ -73,6 +73,18 @@ const ACHIEVEMENTS = [
   { id: 'sudoku_noerrors', name: 'Flawless Logic',    desc: 'Complete a puzzle without a single wrong entry.',   icon: '✨' },
   { id: 'sudoku_nonotes',  name: 'Mental Math',       desc: 'Complete a puzzle without using notes.',            icon: '🧠' },
 
+  // --- Space Impact ---
+  { id: 'impact_level1',   name: 'Cleared for Launch', desc: 'Beat the first level boss in Space Impact.',       icon: '🚀' },
+  { id: 'impact_level3',   name: 'Deep Space',         desc: 'Reach level 3 in Space Impact.',                   icon: '🌌' },
+  { id: 'impact_special',  name: 'Locked On',          desc: 'Destroy an enemy with a special weapon.',          icon: '🎯' },
+  { id: 'impact_noscratch', name: 'Untouchable Pilot', desc: 'Beat a level boss without taking damage.',         icon: '🛡️' },
+
+  // --- Bounce ---
+  { id: 'bounce_level1',   name: 'First Bounce',      desc: 'Clear a level in Bounce.',                          icon: '🔴' },
+  { id: 'bounce_level3',   name: 'Ring Collector',    desc: 'Clear 3 levels in Bounce.',                         icon: '💍' },
+  { id: 'bounce_allrings', name: 'Perfectionist',     desc: 'Collect every ring in a level without missing one.', icon: '✨' },
+  { id: 'bounce_noloss',   name: 'Steady Roll',       desc: 'Clear a level without losing a life.',              icon: '🎯' },
+
   // --- Cross-game / dedication ---
   { id: 'plays_10',        name: 'Regular',           desc: 'Play 10 rounds total, any game.',                   icon: '⭐' },
   { id: 'plays_50',        name: 'Arcade Rat',        desc: 'Play 50 rounds total, any game.',                   icon: '🌟' },

@@ -18,6 +18,8 @@
     { id: 'tetris',   accent: '#c48bff', bg: '#0d0a16', tag: 'Puzzle' },
     { id: 'invaders', accent: '#ff3d7f', bg: '#050912', tag: 'Arcade' },
     { id: 'sudoku',   accent: '#5db0ff', bg: '#0c0a16', tag: 'Puzzle' },
+    { id: 'spaceImpact', accent: '#5fb0ff', bg: '#050815', tag: 'Arcade' },
+    { id: 'bounce',   accent: '#ff3d3d', bg: '#0a0f1c', tag: 'Platformer' },
   ];
 
   function el(id) { return document.getElementById(id); }

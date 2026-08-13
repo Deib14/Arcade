@@ -5,7 +5,7 @@
    up the new build instead of serving stale JS forever.
    ============================================================ */
 
-const CACHE_VERSION = 'corner-arcade-v2.6.0';
+const CACHE_VERSION = 'corner-arcade-v2.11.0';
 
 const PRECACHE_URLS = [
   '/',
@@ -29,6 +29,8 @@ const PRECACHE_URLS = [
   '/js/games/tetris.js',
   '/js/games/invaders.js',
   '/js/games/sudoku.js',
+  '/js/games/spaceimpact.js',
+  '/js/games/bounce.js',
   '/js/app.js',
   '/js/pwa.js'
 ];
